@@ -2,9 +2,9 @@
 # version 1.1.5
 
 logfile="/data/local/tmp/wooper_monitor.log"
-exeggcute="/data/local/tmp/config.json"
-origin=$(cat $exeggcute | tr , '\n' | grep -w 'device_name' | awk -F "\"" '{ print $4 }')
-rotom="$(grep rotom_url $exeggcute | cut -d \" -f 4)"
+exeggcute="/data/local/tmp/cosmog.json"
+origin=$(cat $exeggcute | tr , '\n' | grep -w 'device_id' | awk -F "\"" '{ print $4 }')
+rotom="$(grep rotom_worker_endpoint $exeggcute | cut -d \" -f 4)"
 rotom_host="$(echo $rotom | cut -d / -f 3 | cut -d : -f 1)"
 rotom_port="$(echo $rotom | cut -d / -f 3 | cut -sd : -f 2)"  # if there is a manual port
 rotom_proto="$(echo $rotom | cut -d : -f 1)"
@@ -95,12 +95,12 @@ do
 		check_for_updates
 	fi
 
-	if [ -d /data/data/com.gocheats.launcher ] && [ -s /data/local/tmp/config.json ]
+	if [ -d /data/data/com.sy1vi3.cosmog ] && [ -s /data/local/tmp/cosmog.json ]
 		then
 			[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Exeggcute config.json looks good" >> $logfile
 	else
-			echo "`date +%Y-%m-%d_%T` [MONITORBOT] Exeggcute config.json does not exist or is empty! Let's fix that!" >> $logfile
-			[[ $recreate_exeggcute_config == "true" ]] && logger "exeggcute config.json does not exist or is empty! Let's fix that!"
+			echo "`date +%Y-%m-%d_%T` [MONITORBOT] Exeggcute cosmog.json does not exist or is empty! Let's fix that!" >> $logfile
+			[[ $recreate_exeggcute_config == "true" ]] && logger "exeggcute cosmog.json does not exist or is empty! Let's fix that!"
 			/system/bin/wooper.sh -ic
 			[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Fixed config" >> $logfile
 			stop_start_exeggcute
@@ -124,7 +124,7 @@ do
 	fi
 
     # Check if exeggcute is not running
-    if ! pgrep -f "com.gocheats.launcher"
+    if ! pgrep -f "com.sy1vi3.cosmog"
     then
         echo "`date +%Y-%m-%d_%T` [MONITORBOT] exeggcute is not running. Let's fix that!" >> $logfile
 		[[ $exeggcute_died == "true" ]] && logger "exeggcute is not running. Let's fix that!"
