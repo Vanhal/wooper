@@ -14,13 +14,13 @@ if [ ! -e /data/local/tmp/wooper.log ] ;then
 fi
 
 logfile="/data/local/tmp/wooper.log"
-exeggcute="/data/local/tmp/config.json"
+exeggcute="/data/local/tmp/cosmog.json"
 wooper_versions="/data/local/wooper_versions"
 [[ -f /data/local/wooper_download ]] && wooper_download=$(/system/bin/grep url /data/local/wooper_download | awk -F "=" '{ print $NF }')
 [[ -f /data/local/wooper_download ]] && wooper_user=$(/system/bin/grep authUser /data/local/wooper_download | awk -F "=" '{ print $NF }')
 [[ -f /data/local/wooper_download ]] && wooper_pass=$(/system/bin/grep authPass /data/local/wooper_download | awk -F "=" '{ print $NF }')
-if [[ -f /data/local/tmp/config.json ]] ;then
-    origin=$(/system/bin/cat $exeggcute | /system/bin/tr , '\n' | /system/bin/grep -w 'device_name' | awk -F "\"" '{ print $4 }')
+if [[ -f /data/local/tmp/cosmog.json ]] ;then
+    origin=$(/system/bin/cat $exeggcute | /system/bin/tr , '\n' | /system/bin/grep -w 'device_id' | awk -F "\"" '{ print $4 }')
 else
     origin=$(/system/bin/cat /data/local/initDName)
 fi
@@ -103,21 +103,21 @@ fi
 
     # install 55wooper
 	mount_system_rw
-	until /system/bin/curl -s -k -L --fail --show-error -o  /system/etc/init.d/55wooper https://raw.githubusercontent.com/andi2022/wooper/main/55wooper || { echo "`date +%Y-%m-%d_%T` Download 55wooper failed, exit script" >> $logfile ; exit 1; } ;do
+	until /system/bin/curl -s -k -L --fail --show-error -o  /system/etc/init.d/55wooper https://raw.githubusercontent.com/Vanhal/wooper/main/55wooper || { echo "`date +%Y-%m-%d_%T` Download 55wooper failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
     done
     chmod +x /system/etc/init.d/55wooper
     logger "55wooper installed"
 
     # install 55cron
-    until /system/bin/curl -s -k -L --fail --show-error -o  /system/etc/init.d/55cron https://raw.githubusercontent.com/andi2022/wooper/main/55cron || { echo "`date +%Y-%m-%d_%T` Download 55cron failed, exit script" >> $logfile ; exit 1; } ;do
+    until /system/bin/curl -s -k -L --fail --show-error -o  /system/etc/init.d/55cron https://raw.githubusercontent.com/Vanhal/wooper/main/55cron || { echo "`date +%Y-%m-%d_%T` Download 55cron failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
     done
     chmod +x /system/etc/init.d/55cron
     logger "55cron installed"
 
     # install cron job
-    until /system/bin/curl -s -k -L --fail --show-error -o  /system/bin/ping_test.sh https://raw.githubusercontent.com/andi2022/wooper/main/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
+    until /system/bin/curl -s -k -L --fail --show-error -o  /system/bin/ping_test.sh https://raw.githubusercontent.com/Vanhal/wooper/main/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
     done
     chmod +x /system/bin/ping_test.sh
@@ -128,7 +128,7 @@ fi
 	logger "cron jobs installed"
 
 	# install wooper monitor
-	until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/main/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
+	until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_monitor.sh https://raw.githubusercontent.com/Vanhal/wooper/main/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
 		sleep 2
 	done
 	chmod +x /system/bin/wooper_monitor.sh
@@ -136,11 +136,17 @@ fi
     mount_system_ro
 
     # get version
-    exeggcuteversions=$(/system/bin/grep 'exeggcute' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
+    exeggcuteversions=$(/system/bin/grep 'cosmog' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 
     # download exeggcute
-    /system/bin/rm -f /sdcard/Download/exeggcute.apk
-    until $download /sdcard/Download/exeggcute.apk $wooper_download/com.exeggcute.launcher_v$exeggcuteversions.apk || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/exeggcute.apk $wooper_download/com.exeggcute.launcher_v$exeggcuteversions.apk" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download exeggcute failed, exit script" >> $logfile ; exit 1; } ;do
+    /system/bin/rm -f /sdcard/Download/cosmog.apk
+    until $download /sdcard/Download/cosmog.apk $wooper_download/cosmog-$exeggcuteversions.apk || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/cosmog.apk $wooper_download/cosmog-$exeggcuteversions.apk" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download exeggcute failed, exit script" >> $logfile ; exit 1; } ;do
+      sleep 2
+    done
+
+    # download libNianticLabsPlugin.so
+    /system/bin/rm -f /sdcard/Download/libNianticLabsPlugin.so
+    until $download /sdcard/Download/libNianticLabsPlugin.so $wooper_download/arm64-v8a/libNianticLabsPlugin.so || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/libNianticLabsPlugin.so $wooper_download/arm64-v8a/libNianticLabsPlugin.so" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download exeggcute failed, exit script" >> $logfile ; exit 1; } ;do
       sleep 2
     done
 
@@ -148,16 +154,25 @@ fi
     /system/bin/am force-stop com.nianticlabs.pokemongo > /dev/null 2>&1
     /system/bin/pm clear com.nianticlabs.pokemongo > /dev/null 2>&1
 
+    # install libNianticLabsPlugin.so
+    mkdir -p /data/data/$cosmog_package/files/
+    chown -R $(stat -c "%U" "/data/data/com.sy1vi3.cosmog"):$(stat -c "%G" "/data/data/com.sy1vi3.cosmog") /data/data/com.sy1vi3.cosmog/files/
+    chmod -R $(stat -c "%a" "/data/data/com.sy1vi3.cosmog") /data/data/com.sy1vi3.cosmog/files/
+    cp /sdcard/Download/libNianticLabsPlugin.so /data/data/com.sy1vi3.cosmog/files/libNianticLabsPlugin.so
+    chown root:root /data/data/com.sy1vi3.cosmog/files/libNianticLabsPlugin.so
+    chmod 444 /data/data/com.sy1vi3.cosmog/files/libNianticLabsPlugin.so
+    /system/bin/rm -f /sdcard/Download/libNianticLabsPlugin.so
+
     # Install exeggcute
-    /system/bin/pm install -r /sdcard/Download/exeggcute.apk > /dev/null 2>&1
-    /system/bin/rm -f /sdcard/Download/exeggcute.apk
+    /system/bin/pm install -r /sdcard/Download/cosmog.apk > /dev/null 2>&1
+    /system/bin/rm -f /sdcard/Download/cosmog.apk
     logger "exeggcute installed"
 
     # Grant su access + settings
-	euid="$(dumpsys package com.gocheats.launcher | /system/bin/grep userId | awk -F'=' '{print $2}')"
+	euid="$(dumpsys package com.sy1vi3.cosmog | /system/bin/grep userId | awk -F'=' '{print $2}')"
 	magisk --sqlite "REPLACE INTO policies (uid,policy,until,logging,notification) VALUES($euid,2,0,1,1);"
-    /system/bin/pm grant com.gocheats.launcher android.permission.READ_EXTERNAL_STORAGE
-    /system/bin/pm grant com.gocheats.launcher android.permission.WRITE_EXTERNAL_STORAGE
+    /system/bin/pm grant com.sy1vi3.cosmog android.permission.READ_EXTERNAL_STORAGE
+    /system/bin/pm grant com.sy1vi3.cosmog android.permission.WRITE_EXTERNAL_STORAGE
     logger "exeggcute granted su"
 
     # download gocheats config file and adjust orgin
@@ -167,7 +182,7 @@ fi
     downgrade_pogo
 
     # start execute
-    /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
+    /system/bin/monkey -p com.sy1vi3.cosmog 1 > /dev/null 2>&1
     sleep 15
 
     # Set for reboot device
@@ -175,7 +190,7 @@ fi
 }
 
 install_config(){
-    until $download /data/local/tmp/config.json $wooper_download/config.json || { echo "`date +%Y-%m-%d_%T` $download /data/local/tmp/config.json $wooper_download/config.json" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download exeggcute config file failed, exit script" >> $logfile ; exit 1; } ;do
+    until $download /data/local/tmp/cosmog.json $wooper_download/cosmog.json || { echo "`date +%Y-%m-%d_%T` $download /data/local/tmp/cosmog.json $wooper_download/cosmog.json" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download exeggcute config file failed, exit script" >> $logfile ; exit 1; } ;do
       sleep 2
     done
     /system/bin/sed -i 's,dummy,'$origin',g' $exeggcute
@@ -185,8 +200,8 @@ install_config(){
 update_all(){
     pinstalled=$(dumpsys package com.nianticlabs.pokemongo | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
     pversions=$(/system/bin/grep 'pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
-    exeggcuteinstalled=$(dumpsys package com.gocheats.launcher | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
-    exeggcuteversions=$(/system/bin/grep 'exeggcute' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
+    exeggcuteinstalled=$(dumpsys package com.sy1vi3.cosmog | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
+    exeggcuteversions=$(/system/bin/grep 'cosmog' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 	globalworkers=$(/system/bin/grep 'globalworkers' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 	workerscount=$(/system/bin/grep 'workerscount' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 	exeggcuteworkerscount=$(grep 'workers_count' $exeggcute | sed -r 's/^ [^:]*: ([0-9]+),?$/\1/')
@@ -200,6 +215,10 @@ update_all(){
       until $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download pogo failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
       done
+      /system/bin/rm -f /sdcard/Download/libNianticLabsPlugin.so
+      until $download /sdcard/Download/libNianticLabsPlugin.so $wooper_download/arm64-v8a/libNianticLabsPlugin.so || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/libNianticLabsPlugin.so $wooper_download/arm64-v8a/libNianticLabsPlugin.so" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download exeggcute failed, exit script" >> $logfile ; exit 1; } ;do
+      sleep 2
+    done
       # set pogo to be installed
       pogo_install="install"
     else
@@ -209,8 +228,8 @@ update_all(){
 
     if [ "$exeggcuteinstalled" != "$exeggcuteversions" ] ;then
       logger "New exeggcute version detected, $exeggcuteinstalled=>$exeggcuteversions"
-      /system/bin/rm -f /sdcard/Download/exeggcute.apk
-      until $download /sdcard/Download/exeggcute.apk $wooper_download/com.exeggcute.launcher_v$exeggcuteversions.apk || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/exeggcute.apk $wooper_download/com.exeggcute.launcher_v$exeggcuteversions.apk" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download exeggcute failed, exit script" >> $logfile ; exit 1; } ;do
+      /system/bin/rm -f /sdcard/Download/cosmog.apk
+      until $download /sdcard/Download/cosmog.apk $wooper_download/cosmog-$exeggcuteversions.apk || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/cosmog.apk $wooper_download/cosmog-$exeggcuteversions.apk" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download exeggcute failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
       done
       # set exeggcute to be installed
@@ -233,48 +252,44 @@ update_all(){
      echo "`date +%Y-%m-%d_%T` PlayIntegrityFix already on correct version or not enabled" >> $logfile
     fi
 
-    if [[ $globalworkers == "true" ]] && [ "$exeggcuteworkerscount" != "$workerscount" ] ;then
-      logger "New global workers count detected, $exeggcuteworkerscount=>$workerscount"
-	  sed -i "s/\"workers_count\": [0-9]*/\"workers_count\": $workerscount/" $exeggcute
-	  logger "New workers count $workerscount is active, restarting exeggcute"
-	  am force-stop com.gocheats.launcher
-	  sleep 2
-	  /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
-	else
-     echo "`date +%Y-%m-%d_%T` workers count ok or not enabled" >> $logfile
-    fi
-
     if [ ! -z "$exeggcute_install" ] && [ ! -z "$pogo_install" ] && [ ! -z "$playintegrityfix_install" ] ;then
       echo "`date +%Y-%m-%d_%T` All updates checked and downloaded if needed" >> $logfile
       if [ "$exeggcute_install" = "install" ] ;then
         logger "Start updating exeggcute"
         # install gocheats
-        am force-stop com.gocheats.launcher
+        am force-stop com.sy1vi3.cosmog
 		sleep 2
-		pm uninstall com.gocheats.launcher
+		pm uninstall com.sy1vi3.cosmog
 		sleep 2
-        /system/bin/pm install -r /sdcard/Download/exeggcute.apk || { echo "`date +%Y-%m-%d_%T` Install gocheats failed, downgrade perhaps? Exit script" >> $logfile ; exit 1; }
-        /system/bin/rm -f /sdcard/Download/exeggcute.apk
+        /system/bin/pm install -r /sdcard/Download/cosmog.apk || { echo "`date +%Y-%m-%d_%T` Install gocheats failed, downgrade perhaps? Exit script" >> $logfile ; exit 1; }
+        /system/bin/rm -f /sdcard/Download/cosmog.apk
 
 		# Grant su access + settings after reinstall
-		euid="$(dumpsys package com.gocheats.launcher | /system/bin/grep userId | awk -F'=' '{print $2}')"
+		euid="$(dumpsys package com.sy1vi3.cosmog | /system/bin/grep userId | awk -F'=' '{print $2}')"
 		magisk --sqlite "REPLACE INTO policies (uid,policy,until,logging,notification) VALUES($euid,2,0,1,1);"
-        /system/bin/pm grant com.gocheats.launcher android.permission.READ_EXTERNAL_STORAGE
-        /system/bin/pm grant com.gocheats.launcher android.permission.WRITE_EXTERNAL_STORAGE
-		/system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
+        /system/bin/pm grant com.sy1vi3.cosmog android.permission.READ_EXTERNAL_STORAGE
+        /system/bin/pm grant com.sy1vi3.cosmog android.permission.WRITE_EXTERNAL_STORAGE
+		/system/bin/monkey -p com.sy1vi3.cosmog 1 > /dev/null 2>&1
         logger "exeggcute updated, launcher started"
       fi
       if [ "$pogo_install" = "install" ] ;then
         logger "Start updating pogo"
         # install pogo
-        am force-stop com.gocheats.launcher
+        am force-stop com.sy1vi3.cosmog
 		am force-stop com.nianticlabs.pokemongo
 		sleep 2
 		pm uninstall com.nianticlabs.pokemongo
 		sleep 2
         /system/bin/pm install -r /sdcard/Download/pogo.apk || { echo "`date +%Y-%m-%d_%T` Install pogo failed, downgrade perhaps? Exit script" >> $logfile ; exit 1; }
         /system/bin/rm -f /sdcard/Download/pogo.apk
-        /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
+        mkdir -p /data/data/$cosmog_package/files/
+        chown -R $(stat -c "%U" "/data/data/com.sy1vi3.cosmog"):$(stat -c "%G" "/data/data/com.sy1vi3.cosmog") /data/data/com.sy1vi3.cosmog/files/
+        chmod -R $(stat -c "%a" "/data/data/com.sy1vi3.cosmog") /data/data/com.sy1vi3.cosmog/files/
+        cp /sdcard/Download/libNianticLabsPlugin.so /data/data/com.sy1vi3.cosmog/files/libNianticLabsPlugin.so
+        chown root:root /data/data/com.sy1vi3.cosmog/files/libNianticLabsPlugin.so
+        chmod 444 /data/data/com.sy1vi3.cosmog/files/libNianticLabsPlugin.so
+        /system/bin/rm -f /sdcard/Download/libNianticLabsPlugin.so
+        /system/bin/monkey -p com.sy1vi3.cosmog 1 > /dev/null 2>&1
         logger "PoGo $pversions, launcher started"
 		sleep 45
 		input keyevent 61
@@ -307,7 +322,7 @@ downgrade_pogo(){
       /system/bin/pm install -r /sdcard/Download/pogo.apk
       /system/bin/rm -f /sdcard/Download/pogo.apk
       logger "PoGo installed, now $pversions"
-      /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
+      /system/bin/monkey -p com.sy1vi3.cosmog 1 > /dev/null 2>&1
 	  sleep 45
 	  input keyevent 61
 	  sleep 2
@@ -334,7 +349,7 @@ sleep 30
 if [[ $(basename $0) != "wooper_new.sh" ]] ;then
     mount_system_rw
     oldsh=$(head -2 /system/bin/wooper.sh | /system/bin/grep '# version' | awk '{ print $NF }')
-    until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_new.sh https://raw.githubusercontent.com/andi2022/wooper/main/wooper.sh || { echo "`date +%Y-%m-%d_%T` Download wooper.sh failed, exit script" >> $logfile ; exit 1; } ;do
+    until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_new.sh https://raw.githubusercontent.com/Vanhal/wooper/main/wooper.sh || { echo "`date +%Y-%m-%d_%T` Download wooper.sh failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
     done
     chmod +x /system/bin/wooper_new.sh
@@ -371,7 +386,7 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
     old55=$(head -2 /system/etc/init.d/55wooper | /system/bin/grep '# version' | awk '{ print $NF }')
     if [ "$Ver55wooper" != "$old55" ] ;then
         mount_system_rw
-        until /system/bin/curl -s -k -L --fail --show-error -o /system/etc/init.d/55wooper https://raw.githubusercontent.com/andi2022/wooper/main/55wooper || { echo "`date +%Y-%m-%d_%T` Download 55wooper failed, exit script" >> $logfile ; exit 1; } ;do
+        until /system/bin/curl -s -k -L --fail --show-error -o /system/etc/init.d/55wooper https://raw.githubusercontent.com/Vanhal/wooper/main/55wooper || { echo "`date +%Y-%m-%d_%T` Download 55wooper failed, exit script" >> $logfile ; exit 1; } ;do
             sleep 2
         done
         chmod +x /system/etc/init.d/55wooper
@@ -388,14 +403,14 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
         mount_system_rw
 
         # install 55cron
-        until /system/bin/curl -s -k -L --fail --show-error -o  /system/etc/init.d/55cron https://raw.githubusercontent.com/andi2022/wooper/main/55cron || { echo "`date +%Y-%m-%d_%T` Download 55cron failed, exit script" >> $logfile ; exit 1; } ;do
+        until /system/bin/curl -s -k -L --fail --show-error -o  /system/etc/init.d/55cron https://raw.githubusercontent.com/Vanhal/wooper/main/55cron || { echo "`date +%Y-%m-%d_%T` Download 55cron failed, exit script" >> $logfile ; exit 1; } ;do
             sleep 2
         done
         chmod +x /system/etc/init.d/55cron
         echo "`date +%Y-%m-%d_%T` 55cron installed, from master" >> $logfile
 
         # install cron job
-        until /system/bin/curl -s -k -L --fail --show-error -o  /system/bin/ping_test.sh https://raw.githubusercontent.com/andi2022/wooper/main/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
+        until /system/bin/curl -s -k -L --fail --show-error -o  /system/bin/ping_test.sh https://raw.githubusercontent.com/Vanhal/wooper/main/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
             sleep 2
         done
         chmod +x /system/bin/ping_test.sh
@@ -414,7 +429,7 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
   [ -f /system/bin/wooper_monitor.sh ] && oldMonitor=$(head -2 /system/bin/wooper_monitor.sh | grep '# version' | awk '{ print $NF }') || oldMonitor="0"
   if [ $VerMonitor != $oldMonitor ] ;then
     mount_system_rw
-    until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/main/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
+    until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_monitor.sh https://raw.githubusercontent.com/Vanhal/wooper/main/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
       sleep 2
     done
     chmod +x /system/bin/wooper_monitor.sh
@@ -461,10 +476,10 @@ if [[ $origin != "" ]] ;then
 fi
 
 # check exeggcute config file exists
-if [[ -d /data/data/com.gocheats.launcher ]] && [[ ! -s $exeggcute ]] ;then
+if [[ -d /data/data/com.sy1vi3.cosmog ]] && [[ ! -s $exeggcute ]] ;then
     install_config
-    am force-stop com.gocheats.launcher
-    /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
+    am force-stop com.sy1vi3.cosmog
+    /system/bin/monkey -p com.sy1vi3.cosmog 1 > /dev/null 2>&1
 fi
 
 # enable wooper monitor
