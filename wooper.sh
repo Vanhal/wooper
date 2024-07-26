@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.3.12
+# version 1.3.13
 
 #Version checks
 Ver55wooper="1.0"
@@ -208,7 +208,7 @@ install_config(){
 
 update_all(){
     pinstalled=$(dumpsys package com.nianticlabs.pokemongo | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
-    pversions=$(/system/bin/grep 'cosmog_pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
+    pversions=$(/system/bin/grep 'cosmogpogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
     exeggcuteinstalled=$(dumpsys package com.sy1vi3.cosmog | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
     exeggcuteversions=$(/system/bin/grep 'cosmog' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 	globalworkers=$(/system/bin/grep 'globalworkers' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
@@ -331,7 +331,7 @@ update_all(){
 
 downgrade_pogo(){
     pinstalled=$(dumpsys package com.nianticlabs.pokemongo | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
-    pversions=$(/system/bin/grep 'cosmog_pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
+    pversions=$(/system/bin/grep 'cosmogpogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
     logger "Pogo Versions. Current: $pinstalled Target: $pversions"
     if [[ "$pinstalled" != "$pversions" ]] ;then
       until $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download pogo failed, exit script" >> $logfile ; exit 1; } ;do
@@ -360,8 +360,8 @@ until ping -c1 8.8.8.8 >/dev/null 2>/dev/null || ping -c1 1.1.1.1 >/dev/null 2>/
     sleep 10
 done
 echo "`date +%Y-%m-%d_%T` Internet connection available" >> $logfile
-echo "`date +%Y-%m-%d_%T` Wait 30 seconds, safety delay" >> $logfile
-sleep 30
+echo "`date +%Y-%m-%d_%T` Wait 5 seconds, safety delay" >> $logfile
+sleep 5
 
 
 #download latest wooper.sh
