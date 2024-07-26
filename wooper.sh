@@ -199,7 +199,7 @@ install_config(){
 
 update_all(){
     pinstalled=$(dumpsys package com.nianticlabs.pokemongo | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
-    pversions=$(/system/bin/grep 'pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
+    pversions=$(/system/bin/grep 'cosmog_pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
     exeggcuteinstalled=$(dumpsys package com.sy1vi3.cosmog | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
     exeggcuteversions=$(/system/bin/grep 'cosmog' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 	globalworkers=$(/system/bin/grep 'globalworkers' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
@@ -313,7 +313,7 @@ update_all(){
 
 downgrade_pogo(){
     pinstalled=$(dumpsys package com.nianticlabs.pokemongo | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
-    pversions=$(/system/bin/grep 'pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
+    pversions=$(/system/bin/grep 'cosmog_pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
     if [[ "$pinstalled" != "$pversions" ]] ;then
       until $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download pogo failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
