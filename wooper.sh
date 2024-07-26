@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.3.11
+# version 1.3.12
 
 #Version checks
 Ver55wooper="1.0"
@@ -171,6 +171,15 @@ fi
     # Grant su access + settings
 	euid="$(dumpsys package com.sy1vi3.cosmog | /system/bin/grep userId | awk -F'=' '{print $2}')"
 	magisk --sqlite "REPLACE INTO policies (uid,policy,until,logging,notification) VALUES($euid,2,0,1,1);"
+    magisk --sqlite "REPLACE INTO denylist (package_name,process) VALUES('com.android.vending','com.android.vending');"
+    magisk --sqlite "REPLACE INTO denylist (package_name,process) VALUES('com.nianticlabs.pokemongo','com.nianticlabs.pokemongo');"
+    while [ $i -le 100 ]; do
+      magisk --sqlite "REPLACE INTO denylist (package_name,process) VALUES('com.sy1vi3.cosmog','com.sy1vi3.cosmog:worker$i.com.nianticlabs.pokemongo');"
+      i=$((i + 1))
+    done
+    magisk --sqlite "REPLACE INTO settings (key,value) VALUES('zygisk',1);"
+    magisk --sqlite "REPLACE INTO settings (key,value) VALUES('denylist',1);"
+    magisk --denylist enable
     /system/bin/pm grant com.sy1vi3.cosmog android.permission.READ_EXTERNAL_STORAGE
     /system/bin/pm grant com.sy1vi3.cosmog android.permission.WRITE_EXTERNAL_STORAGE
     logger "exeggcute granted su"
@@ -267,8 +276,17 @@ update_all(){
 		# Grant su access + settings after reinstall
 		euid="$(dumpsys package com.sy1vi3.cosmog | /system/bin/grep userId | awk -F'=' '{print $2}')"
 		magisk --sqlite "REPLACE INTO policies (uid,policy,until,logging,notification) VALUES($euid,2,0,1,1);"
-        /system/bin/pm grant com.sy1vi3.cosmog android.permission.READ_EXTERNAL_STORAGE
-        /system/bin/pm grant com.sy1vi3.cosmog android.permission.WRITE_EXTERNAL_STORAGE
+  		magisk --sqlite "REPLACE INTO denylist (package_name,process) VALUES('com.android.vending','com.android.vending');"
+		magisk --sqlite "REPLACE INTO denylist (package_name,process) VALUES('com.nianticlabs.pokemongo','com.nianticlabs.pokemongo');"
+		while [ $i -le 100 ]; do
+			magisk --sqlite "REPLACE INTO denylist (package_name,process) VALUES('com.sy1vi3.cosmog','com.sy1vi3.cosmog:worker$i.com.nianticlabs.pokemongo');"
+			i=$((i + 1))
+		done
+		magisk --sqlite "REPLACE INTO settings (key,value) VALUES('zygisk',1);"
+		magisk --sqlite "REPLACE INTO settings (key,value) VALUES('denylist',1);"
+		magisk --denylist enable
+        	/system/bin/pm grant com.sy1vi3.cosmog android.permission.READ_EXTERNAL_STORAGE
+        	/system/bin/pm grant com.sy1vi3.cosmog android.permission.WRITE_EXTERNAL_STORAGE
 		/system/bin/monkey -p com.sy1vi3.cosmog 1 > /dev/null 2>&1
         logger "exeggcute updated, launcher started"
       fi
@@ -314,6 +332,7 @@ update_all(){
 downgrade_pogo(){
     pinstalled=$(dumpsys package com.nianticlabs.pokemongo | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
     pversions=$(/system/bin/grep 'cosmog_pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
+    logger "Pogo Versions. Current: $pinstalled Target: $pversions"
     if [[ "$pinstalled" != "$pversions" ]] ;then
       until $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download pogo failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
