@@ -61,10 +61,10 @@ check_for_updates() {
 }
 
 stop_start_exeggcute () {
-	am force-stop com.nianticlabs.pokemongo &  rm -rf /data/data/com.nianticlabs.pokemongo/cache/* & am force-stop com.gocheats.launcher
+	am force-stop com.nianticlabs.pokemongo &  rm -rf /data/data/com.nianticlabs.pokemongo/cache/* & am force-stop com.sy1vi3.cosmog
 	sleep 5
 	[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Start exeggcute launcher" >> $logfile
-	/system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
+	/system/bin/monkey -p com.sy1vi3.cosmog 1 > /dev/null 2>&1
 	sleep 1
 }
 
